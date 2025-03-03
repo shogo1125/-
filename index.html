@@ -4,148 +4,371 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>南めぐりんバス時刻表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
             margin: 0;
             padding: 0;
-            color: #333;
-            background-color: #f8f9fa;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            color: var(--dark-color);
+            background-color: #f0f4f8;
+            line-height: 1.6;
+        }
+        
         .container {
             max-width: 100%;
             padding: 16px;
             box-sizing: border-box;
         }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
         .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #333;
         }
+        
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
         .date-time {
-            font-size: 1.2rem;
-        }
-        .refresh-button {
-            width: 100%;
-            background-color: #fff;
-            color: #333;
-            border: 1px solid #333;
-            padding: 10px;
             font-size: 1.1rem;
-            text-align: center;
-            margin: 10px 0;
+        }
+        
+        .refresh-button {
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
-        }
-        .bus-stop-container {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            margin: 16px 0;
         }
+        
+        .refresh-button i {
+            margin-right: 8px;
+        }
+        
+        .refresh-button:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .bus-stop-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        
+        @media (min-width: 768px) {
+            .bus-stop-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
         .bus-direction {
-            width: 48%;
-            border: 1px solid #333;
-            padding: 10px;
-            box-sizing: border-box;
+            padding: 16px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
         }
+        
         .bus-direction-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #eee;
         }
+        
         .direction-name {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
         }
+        
+        .direction-name i {
+            margin-right: 8px;
+        }
+        
         .change-button {
-            border: 1px solid #333;
-            padding: 5px 10px;
-            background-color: #fff;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
             cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
         }
+        
+        .change-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
         .bus-times {
-            margin-top: 10px;
+            margin-top: 16px;
         }
+        
         .bus-stop-name {
             font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            padding: 8px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            text-align: center;
         }
+        
         .bus-time {
-            margin-bottom: 5px;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        
+        .bus-time-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .bus-time-info i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        
         .countdown {
             font-weight: bold;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
         }
+        
+        .bus-guide {
+            text-align: center;
+            margin: 24px 0 16px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
         .map-container {
-            border: 1px solid #333;
-            padding: 10px;
-            margin-top: 10px;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
         }
+        
         .map-title {
             font-size: 1.2rem;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 10px;
+            margin: 16px 0;
+            color: var(--primary-color);
         }
+        
         .map-content {
-            height: 200px;
+            height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid #333;
+            background-color: #edf2f7;
+            margin: 0 16px 16px;
+            border-radius: 8px;
         }
-        .bus-guide {
+        
+        .bus-route-info {
+            margin-top: 16px;
             text-align: center;
-            margin: 10px 0;
-            font-size: 1.1rem;
+        }
+        
+        .route-stops {
+            display: flex;
+            justify-content: space-between;
+            margin: 16px 0;
+            position: relative;
+            padding: 0 16px;
+        }
+        
+        .route-stops::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 40px;
+            right: 40px;
+            height: 4px;
+            background-color: var(--primary-color);
+            z-index: 1;
+        }
+        
+        .route-stop {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--primary-color);
+            z-index: 2;
+            position: relative;
+            font-weight: bold;
+        }
+        
+        .active-stop {
+            background-color: var(--primary-color);
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="date-time" id="current-date">3月3日 月曜日</div>
-            <div class="date-time" id="current-time">現在時刻：18:43</div>
+        <div class="card">
+            <div class="header">
+                <div>
+                    <div class="app-title">南めぐりんバス</div>
+                    <div class="date-time" id="current-date">3月3日 月曜日</div>
+                </div>
+                <div class="date-time" id="current-time">現在時刻：18:43</div>
+            </div>
         </div>
 
-        <button class="refresh-button" id="refresh-button">更新</button>
+        <button class="refresh-button" id="refresh-button">
+            <i class="fas fa-sync-alt"></i> 時刻を更新する
+        </button>
 
         <div class="bus-stop-container">
             <div class="bus-direction">
                 <div class="bus-direction-header">
-                    <div class="direction-name">乗り場</div>
-                    <button class="change-button" id="change-boarding">変更</button>
+                    <div class="direction-name">
+                        <i class="fas fa-arrow-circle-up"></i> 乗り場
+                    </div>
+                    <button class="change-button" id="change-boarding">
+                        <i class="fas fa-exchange-alt"></i> 変更
+                    </button>
                 </div>
                 <div class="bus-times" id="boarding-times">
-                    <div class="bus-stop-name">16番 バス停名</div>
-                    <div class="bus-time">1本目：<span id="next-bus-boarding-1">--:--</span> <span class="countdown" id="countdown-boarding-1">あと -- 分</span></div>
-                    <div class="bus-time">2本目：<span id="next-bus-boarding-2">--:--</span> <span class="countdown" id="countdown-boarding-2">あと -- 分</span></div>
+                    <div class="bus-stop-name" id="boarding-stop-name">1番 浅草駅</div>
+                    <div class="bus-time">
+                        <div class="bus-time-info">
+                            <i class="fas fa-bus"></i>
+                            <span>1本目：</span>
+                            <span id="next-bus-boarding-1">--:--</span>
+                        </div>
+                        <span class="countdown" id="countdown-boarding-1">あと -- 分</span>
+                    </div>
+                    <div class="bus-time">
+                        <div class="bus-time-info">
+                            <i class="fas fa-bus"></i>
+                            <span>2本目：</span>
+                            <span id="next-bus-boarding-2">--:--</span>
+                        </div>
+                        <span class="countdown" id="countdown-boarding-2">あと -- 分</span>
+                    </div>
                 </div>
             </div>
 
             <div class="bus-direction">
                 <div class="bus-direction-header">
-                    <div class="direction-name">降り場</div>
-                    <button class="change-button" id="change-alighting">変更</button>
+                    <div class="direction-name">
+                        <i class="fas fa-arrow-circle-down"></i> 降り場
+                    </div>
+                    <button class="change-button" id="change-alighting">
+                        <i class="fas fa-exchange-alt"></i> 変更
+                    </button>
                 </div>
                 <div class="bus-times" id="alighting-times">
-                    <div class="bus-stop-name">16番 バス停名</div>
-                    <div class="bus-time">1本目：<span id="next-bus-alighting-1">--:--</span> <span class="countdown" id="countdown-alighting-1">あと -- 分</span></div>
-                    <div class="bus-time">2本目：<span id="next-bus-alighting-2">--:--</span> <span class="countdown" id="countdown-alighting-2">あと -- 分</span></div>
+                    <div class="bus-stop-name" id="alighting-stop-name">1番 浅草駅</div>
+                    <div class="bus-time">
+                        <div class="bus-time-info">
+                            <i class="fas fa-bus"></i>
+                            <span>1本目：</span>
+                            <span id="next-bus-alighting-1">--:--</span>
+                        </div>
+                        <span class="countdown" id="countdown-alighting-1">あと -- 分</span>
+                    </div>
+                    <div class="bus-time">
+                        <div class="bus-time-info">
+                            <i class="fas fa-bus"></i>
+                            <span>2本目：</span>
+                            <span id="next-bus-alighting-2">--:--</span>
+                        </div>
+                        <span class="countdown" id="countdown-alighting-2">あと -- 分</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="bus-guide">バス乗り場案内</div>
+        <div class="bus-guide">南めぐりんバス路線図</div>
 
         <div class="map-container">
-            <div class="map-title">地図</div>
+            <div class="map-title">バス停一覧</div>
+            
+            <div class="route-stops">
+                <div class="route-stop" id="stop-1">1</div>
+                <div class="route-stop" id="stop-2">2</div>
+                <div class="route-stop" id="stop-3">3</div>
+                <div class="route-stop" id="stop-4">4</div>
+                <div class="route-stop" id="stop-5">5</div>
+            </div>
+            
             <div class="map-content">
                 <!-- 地図コンテンツがここに入ります -->
-                ここに地図が表示されます
+                <div>ここに地図が表示されます</div>
+            </div>
+            
+            <div class="bus-route-info">
+                <p>運行時間：平日 8:30〜17:00 / 土日祝 9:30〜17:00</p>
+                <p>15分間隔で運行中</p>
             </div>
         </div>
     </div>
@@ -253,7 +476,7 @@
         function updateBusStopInfo(now) {
             // 乗り場の更新
             const boardingStop = busData[currentBoardingStopId];
-            document.querySelector('#boarding-times .bus-stop-name').textContent = `${currentBoardingStopId}番 ${boardingStop.name}`;
+            document.getElementById('boarding-stop-name').textContent = `${currentBoardingStopId}番 ${boardingStop.name}`;
             
             const boardingDepartures = getNextDepartures(currentBoardingStopId, now);
             document.getElementById('next-bus-boarding-1').textContent = boardingDepartures.departures[0];
@@ -266,7 +489,7 @@
             
             // 降り場の更新
             const alightingStop = busData[currentAlightingStopId];
-            document.querySelector('#alighting-times .bus-stop-name').textContent = `${currentAlightingStopId}番 ${alightingStop.name}`;
+            document.getElementById('alighting-stop-name').textContent = `${currentAlightingStopId}番 ${alightingStop.name}`;
             
             const alightingDepartures = getNextDepartures(currentAlightingStopId, now);
             document.getElementById('next-bus-alighting-1').textContent = alightingDepartures.departures[0];
@@ -276,12 +499,33 @@
                 alightingDepartures.countdowns[0] !== null ? `あと${alightingDepartures.countdowns[0]}分` : '';
             document.getElementById('countdown-alighting-2').textContent = 
                 alightingDepartures.countdowns[1] !== null ? `あと${alightingDepartures.countdowns[1]}分` : '';
+                
+            // バス停の選択状態を視覚的に表示
+            updateRouteStops();
+        }
+        
+        // バス停の選択状態を視覚的に更新
+        function updateRouteStops() {
+            // すべてのバス停のハイライトをリセット
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`stop-${i}`).classList.remove('active-stop');
+            }
+            
+            // 現在選択中のバス停をハイライト
+            document.getElementById(`stop-${currentBoardingStopId}`).classList.add('active-stop');
         }
 
         // バス停変更ダイアログを表示する関数
         function showBusStopDialog(type) {
-            // 簡易的なダイアログを実装
-            const stopId = prompt(`${type === 'boarding' ? '乗り場' : '降り場'}のバス停番号を入力してください (1-5):`);
+            // 各バス停の名前を表示するリストを作成
+            let options = '';
+            for (let id in busData) {
+                options += `${id}: ${busData[id].name}\n`;
+            }
+            
+            // 選択プロンプトを表示
+            const stopId = prompt(`${type === 'boarding' ? '乗り場' : '降り場'}のバス停番号を選択してください:\n\n${options}`);
+            
             if (stopId && busData[stopId]) {
                 if (type === 'boarding') {
                     currentBoardingStopId = stopId;
@@ -321,6 +565,15 @@
             document.getElementById('change-alighting').addEventListener('click', () => {
                 showBusStopDialog('alighting');
             });
+            
+            // 路線図のバス停クリックイベント
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`stop-${i}`).addEventListener('click', () => {
+                    currentBoardingStopId = i.toString();
+                    const now = updateDateTime();
+                    updateBusStopInfo(now);
+                });
+            }
         }
 
         // DOMコンテンツが読み込まれたらアプリを初期化
